@@ -1,14 +1,15 @@
 
-var spreadsheetId = '1490bY-8fvcd-kdMdAu8dLn8fSK-oZydE0dBaPTn0BI8';
+var spreadsheetId = '1nqqJ2K-nh4oOi8funlJkDVNOqFDQgn2UBcEV-m2bsrI';
 var spreadsheetTranslations = require('../index');
 var fs = require('fs');
+const credentials = require('../test-credentials.json');
 
 var newTokens = [
     'TOKEN_' +Date.now(),
     'TOKEN2_' +Date.now()
 ];
 
-spreadsheetTranslations.updateTokens(spreadsheetId, newTokens, __dirname + '/easy-rollouts-3ee98a59bcf6.json', function(error) {
+spreadsheetTranslations.updateTokens(spreadsheetId, newTokens, credentials, function(error) {
 	if (error) {
 		console.error(error);
 	} else {
