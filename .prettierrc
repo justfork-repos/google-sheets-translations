@@ -1,0 +1,20 @@
+{
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "singleQuote": true,
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "overrides": [
+        {
+            "files": [
+                "package.json",
+                "bower.json",
+                "tsconfig.json",
+                "tsconfig.test.json"
+            ],
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}

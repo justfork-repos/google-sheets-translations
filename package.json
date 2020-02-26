@@ -16,6 +16,7 @@
     "google-spreadsheet": "3.0.8"
   },
   "devDependencies": {
-    "async": "^2.0.0-rc.6"
+    "async": "^2.0.0-rc.6",
+    "prettier": "1.19.1"
   }
 }
