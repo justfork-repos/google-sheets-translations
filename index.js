@@ -1,9 +1,8 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-var async = require('async');
 var WorksheetTranslations = require('./worksheet-translations');
 
 async function getTranslationsFromSpreadsheet(doc) {
-    const info = await doc.loadInfo();
+    await doc.loadInfo();
     const results = await Promise.all(
         doc.sheetsByIndex.map((sheet) => getTranslationsFromWorksheet(sheet))
     );
@@ -47,7 +46,7 @@ async function getTranslationsFromWorksheet(worksheet) {
     return new WorksheetTranslations(worksheet.title, translations, locales);
 }
 
-async function updateWorksheetTokens(worksheet, tokens, cb) {
+async function updateWorksheetTokens(worksheet, tokens) {
     console.log('Updating translation tokens for : ' + worksheet.title);
     const rows = await worksheet.getRows();
     var currentTokens = rows
@@ -106,7 +105,7 @@ async function updateSpreadsheetWithTokens(doc, tokens) {
     return results;
 }
 
-async function addWorksheetTranslations(doc, worksheetTranslations, cb) {
+async function addWorksheetTranslations(doc, worksheetTranslations) {
     var headers = [].concat('token', worksheetTranslations.getLocales());
 
     const worksheet = await doc.addWorksheet({
