@@ -1,11 +1,13 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const Promise = require('bluebird');
+
 var WorksheetTranslations = require('./worksheet-translations');
 
 async function getTranslationsFromSpreadsheet(doc) {
     await doc.loadInfo();
     const sheets = doc.sheetsByIndex || [];
-    const results = await Promise.all(
-        sheets.map((sheet) => getTranslationsFromWorksheet(sheet))
+    const results = await Promise.mapSeries(sheets, (sheet) =>
+        getTranslationsFromWorksheet(sheet)
     );
     return results;
 }
@@ -64,12 +66,10 @@ async function updateWorksheetTokens(worksheet, tokens) {
         'Following tokens were missing in the translations spreadsheet: ' +
             missingTokens.join(',')
     );
-    const results = await Promise.all(
-        missingTokens.map(async (token) => {
-            console.log('Adding token: ' + token);
-            return await worksheet.addRow({ token });
-        })
-    );
+    const results = await Promise.mapSeries(missingTokens, async (token) => {
+        console.log('Adding token: ' + token);
+        return await worksheet.addRow({ token });
+    });
     return results;
 }
 
@@ -89,10 +89,8 @@ async function updateSpreadsheetWithTranslations(doc, spreadsheetTranslations) {
         );
         return results;
     }
-    return Promise.all(
-        spreadsheetTranslations.map((worksheetTranslations) =>
-            addTranslations(worksheetTranslations)
-        )
+    return Promise.mapSeries(spreadsheetTranslations, (worksheetTranslations) =>
+        addTranslations(worksheetTranslations)
     );
 }
 
@@ -100,8 +98,8 @@ async function updateSpreadsheetWithTokens(doc, tokens) {
     await doc.loadInfo();
     console.log('Loaded doc: ' + doc.title);
 
-    const results = await Promise.all(
-        doc.sheetsByIndex.map((sheet) => updateWorksheetTokens(sheet, tokens))
+    const results = await Promise.mapSeries(doc.sheetsByIndex, (sheet) =>
+        updateWorksheetTokens(sheet, tokens)
     );
     return results;
 }
@@ -113,16 +111,18 @@ async function addWorksheetTranslations(doc, worksheetTranslations) {
         title: worksheetTranslations.getTitle(),
         headers: headers,
     });
-    const results = await Promise.all(
-        worksheetTranslations.getTokens().map(async (token) => {
+    const results = await Promise.mapSeries(
+        worksheetTranslations.getTokens(),
+        async (token) => {
             var translations = worksheetTranslations.getTranslationsForToken(
                 token
             );
             translations['token'] = token;
             const result = await worksheet.addRow(translations);
             return result;
-        })
+        }
     );
+
     return results;
 }
 

@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.7.2",
     "google-spreadsheet": "3.0.8"
   },
   "devDependencies": {
