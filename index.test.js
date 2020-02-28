@@ -3,67 +3,68 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 jest.genMockFromModule('google-spreadsheet');
 jest.mock('google-spreadsheet');
 describe('spreadsheetTranslations', () => {
+    let mockGoogleSpreadsheetInstance;
+    let mockWorksheets;
+    const mockAddRow = {};
     beforeEach(() => {
         GoogleSpreadsheet.mockClear();
+        mockAddRow.JPARK = jest.fn(() => Promise.resolve());
+        mockAddRow.JAWS = jest.fn(() => Promise.resolve());
+        mockWorksheets = [
+            {
+                title: 'JPARK',
+                getRows: jest.fn(() =>
+                    Promise.resolve([
+                        {
+                            token: 'A_KEY',
+                            en: 'A key',
+                            fr: 'Une clé',
+                        },
+                        {
+                            token: 'WELCOME',
+                            en: 'Welcome... to Jurassic Park.',
+                            fr: 'Bienvenue ... à Jurassic Park.',
+                        },
+                        {
+                            token: 'KEY_EXISTS_FOR_EN_ONLY',
+                            en: 'This key has not been translated to french',
+                        },
+                    ])
+                ),
+                addRow: mockAddRow.JPARK,
+            },
+            {
+                title: 'JAWS',
+                getRows: jest.fn(() =>
+                    Promise.resolve([
+                        {
+                            token: 'A_KEY',
+                            en: 'A key',
+                            fr: 'Une clé',
+                        },
+                        {
+                            token: 'WELCOME',
+                            en: "You're gonna need a bigger boat!",
+                            fr: "Tu vas avoir besoin d'un plus gros bateau!",
+                        },
+                    ])
+                ),
+                addRow: mockAddRow.JAWS,
+            },
+        ];
+
+        mockGoogleSpreadsheetInstance = {
+            useServiceAccountAuth: jest.fn(() => Promise.resolve()),
+            loadInfo: jest.fn(() => Promise.resolve()),
+            title: 'Test Spreadsheet',
+            sheetsByIndex: mockWorksheets,
+        };
+
+        GoogleSpreadsheet.mockImplementation(() => {
+            return mockGoogleSpreadsheetInstance;
+        });
     });
     describe('loadTranslations', () => {
-        let mockGoogleSpreadsheetInstance;
-        let mockWorksheets;
-        beforeEach(() => {
-            mockWorksheets = [
-                {
-                    title: 'JPARK',
-                    getRows: jest.fn(() =>
-                        Promise.resolve([
-                            {
-                                token: 'A_KEY',
-                                en: 'A key',
-                                fr: 'Une clé',
-                            },
-                            {
-                                token: 'WELCOME',
-                                en: 'Welcome... to Jurassic Park.',
-                                fr: 'Bienvenue ... à Jurassic Park.',
-                            },
-                            {
-                                token: 'KEY_EXISTS_FOR_EN_ONLY',
-                                en:
-                                    'This key has not been translated to french',
-                            },
-                        ])
-                    ),
-                },
-                {
-                    title: 'JAWS',
-                    getRows: jest.fn(() =>
-                        Promise.resolve([
-                            {
-                                token: 'A_KEY',
-                                en: 'A key',
-                                fr: 'Une clé',
-                            },
-                            {
-                                token: 'WELCOME',
-                                en: "You're gonna need a bigger boat!",
-                                fr:
-                                    "Tu vas avoir besoin d'un plus gros bateau!",
-                            },
-                        ])
-                    ),
-                },
-            ];
-
-            mockGoogleSpreadsheetInstance = {
-                useServiceAccountAuth: jest.fn(() => Promise.resolve()),
-                loadInfo: jest.fn(() => Promise.resolve()),
-                title: 'Test Spreadsheet',
-                sheetsByIndex: mockWorksheets,
-            };
-
-            GoogleSpreadsheet.mockImplementation(() => {
-                return mockGoogleSpreadsheetInstance;
-            });
-        });
         test('tests will throw error without crednetials', () => {
             return expect(
                 spreadsheetTranslations.loadTranslations('some-id')
@@ -131,69 +132,6 @@ describe('spreadsheetTranslations', () => {
     });
 
     describe('updateTokens', () => {
-        let mockGoogleSpreadsheetInstance;
-        let mockWorksheets;
-        const mockAddRow = {};
-
-        beforeEach(() => {
-            mockAddRow.JPARK = jest.fn(() => Promise.resolve());
-            mockAddRow.JAWS = jest.fn(() => Promise.resolve());
-            mockWorksheets = [
-                {
-                    title: 'JPARK',
-                    getRows: jest.fn(() =>
-                        Promise.resolve([
-                            {
-                                token: 'A_KEY',
-                                en: 'A key',
-                                fr: 'Une clé',
-                            },
-                            {
-                                token: 'WELCOME',
-                                en: 'Welcome... to Jurassic Park.',
-                                fr: 'Bienvenue ... à Jurassic Park.',
-                            },
-                            {
-                                token: 'KEY_EXISTS_FOR_EN_ONLY',
-                                en:
-                                    'This key has not been translated to french',
-                            },
-                        ])
-                    ),
-                    addRow: mockAddRow.JPARK,
-                },
-                {
-                    title: 'JAWS',
-                    getRows: jest.fn(() =>
-                        Promise.resolve([
-                            {
-                                token: 'A_KEY',
-                                en: 'A key',
-                                fr: 'Une clé',
-                            },
-                            {
-                                token: 'WELCOME',
-                                en: "You're gonna need a bigger boat!",
-                                fr:
-                                    "Tu vas avoir besoin d'un plus gros bateau!",
-                            },
-                        ])
-                    ),
-                    addRow: mockAddRow.JAWS,
-                },
-            ];
-
-            mockGoogleSpreadsheetInstance = {
-                useServiceAccountAuth: jest.fn(() => Promise.resolve()),
-                loadInfo: jest.fn(() => Promise.resolve()),
-                title: 'Test Spreadsheet',
-                sheetsByIndex: mockWorksheets,
-            };
-
-            GoogleSpreadsheet.mockImplementation(() => {
-                return mockGoogleSpreadsheetInstance;
-            });
-        });
         test('tests the requirement of credentials when calling', () => {
             return expect(
                 spreadsheetTranslations.updateTokens('some-id')
