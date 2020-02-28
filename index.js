@@ -3,8 +3,9 @@ var WorksheetTranslations = require('./worksheet-translations');
 
 async function getTranslationsFromSpreadsheet(doc) {
     await doc.loadInfo();
+    const sheets = doc.sheetsByIndex || [];
     const results = await Promise.all(
-        doc.sheetsByIndex.map((sheet) => getTranslationsFromWorksheet(sheet))
+        sheets.map((sheet) => getTranslationsFromWorksheet(sheet))
     );
     return results;
 }
@@ -96,7 +97,7 @@ async function updateSpreadsheetWithTranslations(doc, spreadsheetTranslations) {
 }
 
 async function updateSpreadsheetWithTokens(doc, tokens) {
-    await doc.getInfo();
+    await doc.loadInfo();
     console.log('Loaded doc: ' + doc.title);
 
     const results = await Promise.all(
@@ -131,7 +132,7 @@ module.exports.createTranslationsSpreadsheet = async function(
     credentials,
     cb
 ) {
-    if (typeof credentials === 'function') {
+    if (!credentials || typeof credentials === 'function') {
         throw new Error('Must provide credentials');
     } else {
         try {
@@ -153,15 +154,19 @@ module.exports.loadTranslations = async function(
     credentials,
     cb
 ) {
-    if (typeof credentials === 'function') {
+    if (!credentials || typeof credentials === 'function') {
         throw new Error('Must provide credentials');
     } else {
         try {
-            var doc = new GoogleSpreadsheet(spreadsheetId);
+            const doc = new GoogleSpreadsheet(spreadsheetId);
             await doc.useServiceAccountAuth(credentials);
             const results = await getTranslationsFromSpreadsheet(doc);
             cb(null, results);
         } catch (err) {
+            console.log('------');
+            console.log(err);
+            console.log('-----');
+            console.log(cb);
             cb(err);
         }
     }
@@ -173,7 +178,7 @@ module.exports.updateTokens = async function(
     credentials,
     cb
 ) {
-    if (typeof credentials === 'function') {
+    if (!credentials || typeof credentials === 'function') {
         throw new Error('Must provide credentials');
     } else {
         try {

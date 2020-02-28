@@ -8,7 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,8 @@
     "google-spreadsheet": "3.0.8"
   },
   "devDependencies": {
+    "j": "1.0.0",
+    "jest": "25.1.0",
     "prettier": "1.19.1"
   }
 }
