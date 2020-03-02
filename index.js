@@ -1,7 +1,7 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const Promise = require('bluebird');
 
-var WorksheetTranslations = require('./worksheet-translations');
+const WorksheetTranslations = require('./worksheet-translations');
 
 async function getTranslationsFromSpreadsheet(doc) {
     await doc.loadInfo();
@@ -15,10 +15,10 @@ async function getTranslationsFromSpreadsheet(doc) {
 async function getTranslationsFromWorksheet(worksheet) {
     console.log('Getting translations for : ' + worksheet.title);
     const rows = await worksheet.getRows();
-    var translations = {};
-    var locales = [];
+    const translations = {};
+    const locales = [];
     rows.forEach(function(row) {
-        var token = row.token;
+        const token = row.token;
         if (token) {
             if (translations[token]) {
                 console.warn(
@@ -52,14 +52,14 @@ async function getTranslationsFromWorksheet(worksheet) {
 async function updateWorksheetTokens(worksheet, tokens) {
     console.log('Updating translation tokens for : ' + worksheet.title);
     const rows = await worksheet.getRows();
-    var currentTokens = rows
+    const currentTokens = rows
         .map(function(row) {
             return row.token;
         })
         .filter(function(token) {
             return token && token.length;
         });
-    var missingTokens = tokens.filter(function(token) {
+    const missingTokens = tokens.filter(function(token) {
         return currentTokens.indexOf(token) === -1;
     });
     console.log(
@@ -105,7 +105,7 @@ async function updateSpreadsheetWithTokens(doc, tokens) {
 }
 
 async function addWorksheetTranslations(doc, worksheetTranslations) {
-    var headers = [].concat('token', worksheetTranslations.getLocales());
+    const headers = [].concat('token', worksheetTranslations.getLocales());
 
     const worksheet = await doc.addWorksheet({
         title: worksheetTranslations.getTitle(),
@@ -114,7 +114,7 @@ async function addWorksheetTranslations(doc, worksheetTranslations) {
     const results = await Promise.mapSeries(
         worksheetTranslations.getTokens(),
         async (token) => {
-            var translations = worksheetTranslations.getTranslationsForToken(
+            const translations = worksheetTranslations.getTranslationsForToken(
                 token
             );
             translations['token'] = token;
@@ -136,7 +136,7 @@ module.exports.createTranslationsSpreadsheet = async function(
         throw new Error('Must provide credentials');
     } else {
         try {
-            var doc = new GoogleSpreadsheet(spreadsheetId);
+            const doc = new GoogleSpreadsheet(spreadsheetId);
             await doc.useServiceAccountAuth(credentials);
             const results = await updateSpreadsheetWithTranslations(
                 doc,
@@ -182,7 +182,7 @@ module.exports.updateTokens = async function(
         throw new Error('Must provide credentials');
     } else {
         try {
-            var doc = new GoogleSpreadsheet(spreadsheetId);
+            const doc = new GoogleSpreadsheet(spreadsheetId);
             await doc.useServiceAccountAuth(credentials);
             const results = await updateSpreadsheetWithTokens(doc, tokens);
             cb(null, results);
