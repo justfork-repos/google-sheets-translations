@@ -38,7 +38,7 @@ async function getTranslationsFromWorksheet(worksheet) {
                     if (locales.indexOf(locale) === -1) {
                         locales.push(locale);
                     }
-                    translations[token][locale] = row[locale];
+                    translations[token][locale] = row[locale] || '';
                 });
         } else {
             console.error(
