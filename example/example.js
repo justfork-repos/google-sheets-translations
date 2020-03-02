@@ -1,18 +1,34 @@
+const spreadsheetId = '1nqqJ2K-nh4oOi8funlJkDVNOqFDQgn2UBcEV-m2bsrI';
+const spreadsheetTranslations = require('../index');
+const fs = require('fs');
+const credentials = require('../test-credentials.json');
 
-var spreadsheetId = '1490bY-8fvcd-kdMdAu8dLn8fSK-oZydE0dBaPTn0BI8';
-var spreadsheetTranslations = require('../index');
-var fs = require('fs');
-
-spreadsheetTranslations.loadTranslations(spreadsheetId, function(error, spreadsheetTranslations) {
-	if (error) {
-		console.error(error);
-	} else {
-		spreadsheetTranslations.forEach(function(worksheetTranslations) {
-			var brand = worksheetTranslations.getTitle();
-			worksheetTranslations.getLocales().forEach(function(locale) {
-				var filename = __dirname + '/data/' + brand.toUpperCase() + '.' + locale + '.json'; 
-				fs.writeFileSync(filename, JSON.stringify(worksheetTranslations.getTranslationsForLocale(locale), null, 4));
-			})
-		});
-	}
+spreadsheetTranslations.loadTranslations(spreadsheetId, credentials, function(
+    error,
+    spreadsheetTranslations
+) {
+    if (error) {
+        console.error(error);
+    } else {
+        spreadsheetTranslations.forEach(function(worksheetTranslations) {
+            var brand = worksheetTranslations.getTitle();
+            worksheetTranslations.getLocales().forEach(function(locale) {
+                var filename =
+                    __dirname +
+                    '/data/' +
+                    brand.toUpperCase() +
+                    '.' +
+                    locale +
+                    '.json';
+                fs.writeFileSync(
+                    filename,
+                    JSON.stringify(
+                        worksheetTranslations.getTranslationsForLocale(locale),
+                        null,
+                        4
+                    )
+                );
+            });
+        });
+    }
 });

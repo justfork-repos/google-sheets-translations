@@ -8,14 +8,17 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "google-spreadsheet": "^2.0.6"
+    "bluebird": "^3.7.2",
+    "google-spreadsheet": "3.0.8"
   },
   "devDependencies": {
-    "async": "^2.0.0-rc.6"
+    "j": "1.0.0",
+    "jest": "25.1.0",
+    "prettier": "1.19.1"
   }
 }

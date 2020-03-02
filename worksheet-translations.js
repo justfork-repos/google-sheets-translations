@@ -4,43 +4,42 @@ function WorksheetTranslations(title, translations, locales) {
     self.translations = translations || {};
     self.title = title;
 
-    self.getTitle = function () {
+    self.getTitle = function() {
         return self.title;
     };
 
-    self.getLocales = function () {
+    self.getLocales = function() {
         return self.locales;
     };
 
-    self.getTranslationsForToken = function (token) {
+    self.getTranslationsForToken = function(token) {
         return self.translations[token] || {};
     };
 
-    self.getTranslationsForLocale = function (locale) {
+    self.getTranslationsForLocale = function(locale) {
         var localeTranslations = {};
-        self.getTokens().forEach(function (token) {
+        self.getTokens().forEach(function(token) {
             localeTranslations[token] = self.translations[token][locale];
         });
         return localeTranslations;
     };
 
-    self.getTokens = function () {
+    self.getTokens = function() {
         return Object.keys(self.translations).sort();
     };
 
-    self.addLocale = function (locale, translations) {
+    self.addLocale = function(locale, translations) {
         if (self.locales.indexOf(locale) !== -1) {
-            throw new Error('cannot add locale ' + locale + ' as it already exists')
+            throw new Error(
+                'cannot add locale ' + locale + ' as it already exists'
+            );
         }
-        Object.keys(translations)
-            .forEach(function (key) {
-                if (!self.translations[key]) {
-                    self.translations[key] = {};
-                }
-                self.translations[key][locale] = translations[key];
-
-
-            });
+        Object.keys(translations).forEach(function(key) {
+            if (!self.translations[key]) {
+                self.translations[key] = {};
+            }
+            self.translations[key][locale] = translations[key];
+        });
         self.locales.push(locale);
     };
 }
